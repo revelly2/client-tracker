@@ -2,13 +2,11 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import {
-  LayoutDashboard, Plus, LogOut, Search, FolderKanban,
-  ShieldCheck, Eye, EyeOff, AlertTriangle,
+  LayoutDashboard, Plus, Search, FolderKanban, AlertTriangle,
 } from 'lucide-react'
 import type { Project } from '../../lib/types'
 import {
   loadProjects, addProject, updateProject, deleteProject,
-  checkAdminPassword, setAdminSession, clearAdminSession, isAdminAuthenticated,
 } from '../../lib/store'
 import ProjectCard from '../../components/ProjectCard'
 import ProjectForm from '../../components/ProjectForm'
@@ -26,89 +24,8 @@ function StatCard({ label, value, sub, accent }: {
   )
 }
 
-// ─── Login ───────────────────────────────────────────────────────────────────
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
-  const [pw, setPw]         = useState('')
-  const [show, setShow]     = useState(false)
-  const [error, setError]   = useState('')
-  const [shake, setShake]   = useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (checkAdminPassword(pw)) {
-      setAdminSession()
-      onLogin()
-    } else {
-      setError('Incorrect password. Please try again.')
-      setShake(true)
-      setTimeout(() => setShake(false), 500)
-    }
-  }
-
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-[#0f0f1a] to-indigo-950">
-      {/* Gradient blobs */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className={`glass-card w-full max-w-sm p-8 shadow-2xl z-10 animate-fade-in ${shake ? 'animate-[shake_0.3s_ease]' : ''}`}>
-        {/* Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-900/50">
-            <ShieldCheck size={30} className="text-white" />
-          </div>
-        </div>
-
-        <h1 className="text-xl font-bold text-slate-100 text-center mb-1">Admin Access</h1>
-        <p className="text-sm text-slate-400 text-center mb-6">Enter your password to continue</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="label-text" htmlFor="admin-password">Password</label>
-            <div className="relative">
-              <input
-                id="admin-password"
-                type={show ? 'text' : 'password'}
-                className="input-field pr-10"
-                placeholder="Enter admin password"
-                value={pw}
-                onChange={(e) => { setPw(e.target.value); setError('') }}
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={() => setShow((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                aria-label={show ? 'Hide password' : 'Show password'}
-              >
-                {show ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          {error && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-rose-400 bg-rose-950/40 border border-rose-800/40">
-              <AlertTriangle size={13} />
-              {error}
-            </div>
-          )}
-
-          <button type="submit" className="btn-primary w-full justify-center py-2.5" id="login-submit">
-            Sign In
-          </button>
-        </form>
-
-        <p className="text-center text-xs text-slate-600 mt-5">
-          Default password: <code className="text-slate-500 font-mono">admin123</code>
-        </p>
-      </div>
-    </div>
-  )
-}
-
 // ─── Dashboard ───────────────────────────────────────────────────────────────
 export default function AdminPage() {
-  const [authed, setAuthed]         = useState(false)
   const [hydrated, setHydrated]     = useState(false)
   const [projects, setProjects]     = useState<Project[]>([])
   const [search, setSearch]         = useState('')
@@ -116,19 +33,12 @@ export default function AdminPage() {
   const [editing, setEditing]       = useState<Project | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
-  useEffect(() => {
-    setAuthed(isAdminAuthenticated())
-    setHydrated(true)
-  }, [])
-
   const refresh = useCallback(() => setProjects(loadProjects()), [])
 
   useEffect(() => {
-    if (authed) refresh()
-  }, [authed, refresh])
-
-  const handleLogin  = () => { setAuthed(true) }
-  const handleLogout = () => { clearAdminSession(); setAuthed(false); setProjects([]) }
+    setHydrated(true)
+    refresh()
+  }, [refresh])
 
   const handleSave = (data: Omit<Project, 'id' | 'shareToken' | 'createdAt'>) => {
     if (editing) {
@@ -149,7 +59,6 @@ export default function AdminPage() {
   }
 
   if (!hydrated) return null // avoid hydration mismatch
-  if (!authed)   return <LoginScreen onLogin={handleLogin} />
 
   const filtered = projects.filter(
     (p) =>
@@ -186,10 +95,6 @@ export default function AdminPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Admin
             </span>
-            <button onClick={handleLogout} className="btn-secondary py-1.5 px-3 text-xs" id="logout-btn">
-              <LogOut size={13} />
-              Logout
-            </button>
           </div>
         </div>
       </header>
