@@ -15,21 +15,21 @@ import FileAttachments from '../../../components/FileAttachments'
 function StatusIcon({ status }: { status: Project['status'] }) {
   if (status === 'Active')    return <Clock size={16} className="text-blue-400" />
   if (status === 'Completed') return <CheckCircle2 size={16} className="text-emerald-400" />
-  if (status === 'On Hold')   return <PauseCircle size={16} className="text-orange-400" />
+  if (status === 'On Hold')   return <PauseCircle size={16} className="text-amber-400" />
   return <Eye size={16} className="text-purple-400" />
 }
 
 function Divider() {
-  return <div className="h-px w-full bg-slate-800 my-1" />
+  return <div className="h-px w-full bg-white/5 my-2" />
 }
 
 function SectionLabel({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="flex items-center gap-2 mb-3">
-      <div className="w-6 h-6 rounded-md bg-slate-700/60 flex items-center justify-center shrink-0">
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
         {icon}
       </div>
-      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{label}</span>
+      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
     </div>
   )
 }
@@ -54,8 +54,8 @@ export default function PublicProjectPage({
   // Loading state
   if (project === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#020617]">
+        <div className="w-10 h-10 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
       </div>
     )
   }
@@ -63,16 +63,16 @@ export default function PublicProjectPage({
   // Not found
   if (project === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-[#0f0f1a] to-indigo-950">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-rose-600/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="glass-card max-w-sm w-full p-8 text-center shadow-2xl animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-rose-950/60 border border-rose-800/40 flex items-center justify-center mx-auto mb-5">
-            <AlertCircle size={28} className="text-rose-400" />
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[#020617] overflow-hidden relative">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen" />
+        <div className="glass-card max-w-md w-full p-10 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)] animate-entrance border-red-500/20">
+          <div className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <AlertCircle size={32} className="text-red-400" />
           </div>
-          <h1 className="text-xl font-bold text-slate-100 mb-2">Project Not Found</h1>
-          <p className="text-sm text-slate-400 leading-relaxed">
-            This project link is invalid or may have been removed.
-            Please contact your project manager for a new link.
+          <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Access Denied</h1>
+          <p className="text-sm text-slate-400 font-light leading-relaxed">
+            This deployment link is invalid or the node has been purged from the matrix.
+            Please verify your access token.
           </p>
         </div>
       </div>
@@ -87,59 +87,61 @@ export default function PublicProjectPage({
   const hasImages = project.imageLinks && project.imageLinks.length > 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#0f0f1a] to-indigo-950 p-4 sm:p-8">
+    <div className="min-h-screen relative overflow-hidden p-4 sm:p-8 flex items-center justify-center">
       {/* Background blobs */}
-      <div className="fixed top-0 left-0 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-float" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-float" style={{ animationDelay: '-2s' }} />
 
       {/* Lightbox */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-zoom-out"
+          className="fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4 cursor-zoom-out bg-black/90"
           onClick={() => setLightbox(null)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={lightbox}
             alt="Full size preview"
-            className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain animate-fade-in"
+            className="max-w-full max-h-full rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] object-contain animate-entrance border border-white/5"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
       )}
 
-      <div className="relative max-w-2xl mx-auto animate-fade-in">
+      <div className="relative max-w-2xl w-full mx-auto animate-entrance z-10 my-auto">
         {/* Brand header */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-900/40">
-            <FolderKanban size={18} className="text-white" />
+        <div className="flex items-center justify-center gap-4 mb-8 opacity-80 hover:opacity-100 transition-opacity">
+          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+            <FolderKanban size={18} className="text-blue-400" />
           </div>
           <div className="text-left">
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-widest">Client Portal</p>
-            <p className="text-sm font-bold text-slate-200 leading-none">Project Status Update</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest font-mono">Client Node</p>
+            <p className="text-sm font-bold text-white tracking-wide">Deployment Status</p>
           </div>
         </div>
 
         {/* Main card */}
-        <div className="glass-card overflow-hidden shadow-2xl">
+        <div className="glass-card overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] group hover:shadow-[0_20px_60px_rgba(59,130,246,0.1)] transition-shadow duration-500">
           {/* Top accent bar */}
-          <div className={`h-1 w-full ${
-            project.status === 'Active'    ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
-            project.status === 'Completed' ? 'bg-gradient-to-r from-emerald-400 to-green-500' :
-            project.status === 'On Hold'   ? 'bg-gradient-to-r from-orange-400 to-amber-500' :
-                                             'bg-gradient-to-r from-purple-400 to-violet-500'
+          <div className={`h-1.5 w-full ${
+            project.status === 'Active'    ? 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)]' :
+            project.status === 'Completed' ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.8)]' :
+            project.status === 'On Hold'   ? 'bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.8)]' :
+                                             'bg-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.8)]'
           }`} />
 
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-6 sm:p-10 space-y-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
+
             {/* ─── Row 1: Project Name + Payment ─── */}
-            <div>
-              <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
+            <div className="relative z-10">
+              <div className="flex flex-wrap items-start justify-between gap-6 mb-2">
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Project Name</p>
-                  <h1 className="text-2xl font-extrabold text-slate-100 leading-tight">{project.name}</h1>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 font-mono">Designation</p>
+                  <h1 className="text-3xl font-black text-white leading-tight tracking-tight">{project.name}</h1>
                 </div>
-                <div className="mt-1">
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Payment</p>
+                <div className="mt-1 shrink-0">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 font-mono text-right">Tariff</p>
                   <PaymentBadge status={project.paymentStatus} cost={project.cost} />
                 </div>
               </div>
@@ -148,32 +150,32 @@ export default function PublicProjectPage({
             <Divider />
 
             {/* ─── Row 2: Client Name ─── */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shrink-0">
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-black text-lg shadow-inner shrink-0">
                 {project.clientName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="text-xs text-slate-500 font-medium">Client Name</p>
-                <p className="text-base font-semibold text-slate-100">{project.clientName}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Assigned Client</p>
+                <p className="text-base font-bold text-white">{project.clientName}</p>
               </div>
               <div className="ml-auto text-right">
-                <p className="text-xs text-slate-500 font-medium">Project Started</p>
-                <p className="text-sm text-slate-300 font-medium">{formattedDate}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Init Date</p>
+                <p className="text-sm text-slate-300 font-mono">{formattedDate}</p>
               </div>
             </div>
 
             <Divider />
 
             {/* ─── Row 3: Progress ─── */}
-            <div>
+            <div className="relative z-10">
               <ProgressBar value={project.progress} animated />
             </div>
 
             {/* ─── Row 4: Status ─── */}
-            <div className="flex items-center gap-3 bg-slate-800/40 border border-slate-700/50 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-4 bg-slate-900/50 border border-white/5 rounded-2xl px-5 py-4 relative z-10 shadow-inner">
               <StatusIcon status={project.status} />
               <div className="flex-1">
-                <p className="text-xs text-slate-500 font-medium mb-0.5">Current Status</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Network Status</p>
                 <StatusBadge status={project.status} />
               </div>
             </div>
@@ -181,11 +183,11 @@ export default function PublicProjectPage({
             <Divider />
 
             {/* ─── Row 5: Notes ─── */}
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Latest Notes</p>
-              <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
-                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-                  {project.notes || 'No notes have been added yet.'}
+            <div className="relative z-10">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Protocol Updates</p>
+              <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-5 shadow-inner">
+                <p className="text-sm text-slate-300 leading-relaxed font-light whitespace-pre-wrap">
+                  {project.notes || 'No protocol updates found in the ledger.'}
                 </p>
               </div>
             </div>
@@ -194,29 +196,29 @@ export default function PublicProjectPage({
             {project.projectLink && (
               <>
                 <Divider />
-                <div>
+                <div className="relative z-10">
                   <SectionLabel
-                    icon={<Link size={12} className="text-indigo-400" />}
-                    label="Project Link"
+                    icon={<Link size={14} className="text-blue-400" />}
+                    label="External Node Gateway"
                   />
                   {project.paymentStatus !== 'paid' ? (
                     <button
                       onClick={() => setPaymentModalOpen(true)}
-                      className="w-full text-left relative overflow-hidden rounded-xl border border-dashed border-slate-700 bg-slate-900/30 hover:bg-slate-800/50 transition-colors group p-4 flex flex-col items-center justify-center"
+                      className="w-full text-left relative overflow-hidden rounded-2xl border border-dashed border-amber-500/30 bg-slate-900/30 hover:bg-slate-900/50 transition-colors group p-6 flex flex-col items-center justify-center shadow-inner"
                     >
-                      <div className="w-full opacity-30 blur-[4px] pointer-events-none mb-3">
-                        <div className="flex items-center gap-3 bg-indigo-950/40 border border-indigo-700/40 rounded-xl px-4 py-3">
-                          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
-                            <ExternalLink size={14} className="text-indigo-400" />
+                      <div className="w-full opacity-30 blur-[6px] pointer-events-none mb-4">
+                        <div className="flex items-center gap-4 bg-blue-900/20 border border-blue-500/20 rounded-xl px-5 py-4">
+                          <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                            <ExternalLink size={16} className="text-blue-400" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-slate-500 mb-0.5">Visit Project</p>
-                            <p className="text-sm text-indigo-300 truncate">{project.projectLink}</p>
+                            <p className="text-xs text-slate-500 mb-1">Access Gateway</p>
+                            <p className="text-sm text-blue-400 truncate">{project.projectLink}</p>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-widest group-hover:scale-105 transition-transform drop-shadow-md">
-                        <AlertCircle size={14} /> Requires Payment to Unlock
+                      <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-widest group-hover:scale-105 transition-transform drop-shadow-[0_0_10px_rgba(245,158,11,0.5)] bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full absolute">
+                        <AlertCircle size={16} /> Tariff Outstanding. Gateway Locked.
                       </div>
                     </button>
                   ) : (
@@ -224,18 +226,18 @@ export default function PublicProjectPage({
                       href={project.projectLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 bg-indigo-950/40 border border-indigo-700/40 hover:border-indigo-500/60 rounded-xl px-4 py-3 transition-all group"
+                      className="flex items-center gap-4 bg-blue-500/5 border border-blue-500/20 hover:border-blue-400 hover:bg-blue-500/10 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] rounded-2xl px-5 py-4 transition-all group shadow-inner"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
-                        <ExternalLink size={14} className="text-indigo-400" />
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/20">
+                        <ExternalLink size={16} className="text-blue-400 group-hover:scale-110 transition-transform" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-slate-500 mb-0.5">Visit Project</p>
-                        <p className="text-sm text-indigo-300 group-hover:text-indigo-200 truncate transition-colors">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Enter Gateway</p>
+                        <p className="text-sm font-mono text-blue-400 group-hover:text-blue-300 truncate transition-colors">
                           {project.projectLink}
                         </p>
                       </div>
-                      <ExternalLink size={14} className="text-slate-600 group-hover:text-indigo-400 shrink-0 transition-colors" />
+                      <ExternalLink size={16} className="text-slate-600 group-hover:text-blue-400 shrink-0 transition-colors" />
                     </a>
                   )}
                 </div>
@@ -246,10 +248,10 @@ export default function PublicProjectPage({
             {hasFiles && (
               <>
                 <Divider />
-                <div>
+                <div className="relative z-10">
                   <SectionLabel
-                    icon={<ExternalLink size={12} className="text-amber-400" />}
-                    label={`Attachments (${project.fileLinks!.length})`}
+                    icon={<ExternalLink size={14} className="text-amber-400" />}
+                    label={`Data Assets (${project.fileLinks!.length})`}
                   />
                   <FileAttachments files={project.fileLinks!} />
                 </div>
@@ -260,32 +262,32 @@ export default function PublicProjectPage({
             {hasImages && (
               <>
                 <Divider />
-                <div>
+                <div className="relative z-10">
                   <SectionLabel
-                    icon={<Image size={12} className="text-emerald-400" />}
-                    label={`Pictures (${project.imageLinks!.length})`}
+                    icon={<Image size={14} className="text-emerald-400" />}
+                    label={`Visual Feeds (${project.imageLinks!.length})`}
                   />
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {project.imageLinks!.map((url, i) => (
                       <button
                         key={i}
                         onClick={() => setLightbox(url)}
-                        className="group relative overflow-hidden rounded-xl border border-slate-700/50 hover:border-indigo-500/50 transition-all aspect-video cursor-zoom-in"
+                        className="group relative overflow-hidden rounded-2xl border border-white/5 hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all aspect-video cursor-zoom-in bg-slate-900/50"
                         title="Click to enlarge"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={url}
                           alt={`Project image ${i + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
                             target.style.display = 'none'
                             target.parentElement!.classList.add('hidden')
                           }}
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <ExternalLink size={20} className="text-white drop-shadow-lg" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-blue-500/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
+                          <ExternalLink size={24} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
                         </div>
                       </button>
                     ))}
@@ -297,48 +299,49 @@ export default function PublicProjectPage({
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-700 mt-6">
-          This is a private project update link. Please do not share it with others.
+        <p className="text-center text-[10px] font-mono tracking-widest uppercase text-slate-600 mt-8 opacity-70">
+          Encrypted Channel. Do Not Distribute.
         </p>
       </div>
 
       {/* Payment Modal */}
       {paymentModalOpen && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay bg-black/80"
           onClick={() => setPaymentModalOpen(false)}
         >
-          <div className="glass-card w-full max-w-sm p-8 shadow-2xl animate-fade-in" onClick={(e) => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-amber-950/60 border border-amber-800/40 flex items-center justify-center mb-5 mx-auto">
-              <AlertCircle size={24} className="text-amber-400" />
+          <div className="glass-card w-full max-w-md p-8 sm:p-10 shadow-[0_0_50px_rgba(245,158,11,0.15)] animate-entrance border-amber-500/20" onClick={(e) => e.stopPropagation()}>
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-6 mx-auto shadow-inner">
+              <AlertCircle size={32} className="text-amber-400" />
             </div>
-            <h3 className="text-lg font-bold text-slate-100 text-center mb-2">Payment Required</h3>
-            <p className="text-sm text-slate-400 text-center mb-6">
-              Please complete your payment to unlock the project link.
+            <h3 className="text-2xl font-black text-white text-center mb-2">Gateway Locked</h3>
+            <p className="text-sm font-light text-slate-400 text-center mb-8">
+              Outstanding tariff detected. Complete authorization to unlock the deployment gateway.
             </p>
             
-            <div className="space-y-4 text-sm text-slate-300 bg-slate-900/50 p-5 rounded-xl border border-slate-800">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-indigo-950 flex items-center justify-center text-indigo-400 font-bold text-xs shrink-0 mt-0.5">1</div>
+            <div className="space-y-4 text-sm text-slate-300 bg-slate-900/50 p-6 rounded-2xl border border-white/5 shadow-inner">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-black shrink-0 shadow-inner">1</div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Pay using GCash</p>
-                  <p className="text-lg font-mono font-bold text-emerald-400">0977 481 2075</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Remit to GCash Node</p>
+                  <p className="text-xl font-black text-emerald-400 font-mono tracking-wider drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">0977 481 2075</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 pt-2">
-                <div className="w-6 h-6 rounded-full bg-indigo-950 flex items-center justify-center text-indigo-400 font-bold text-xs shrink-0 mt-0.5">2</div>
+              <div className="border-t border-white/5 my-2"></div>
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-black shrink-0 shadow-inner">2</div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Verify Payment</p>
-                  <p>Send a screenshot of the receipt to <br/><strong className="text-indigo-400">Mark Daluson (Facebook)</strong></p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Verify Authorization</p>
+                  <p className="font-light">Forward the transaction receipt to <strong className="text-blue-400 font-bold ml-1">Mark Daluson (Facebook)</strong> for manual override.</p>
                 </div>
               </div>
             </div>
 
             <button
               onClick={() => setPaymentModalOpen(false)}
-              className="btn-primary w-full justify-center mt-6 py-2.5"
+              className="btn-primary w-full justify-center mt-8 py-3.5 bg-amber-600 hover:bg-amber-500 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)]"
             >
-              I Understand
+              Acknowledge Directive
             </button>
           </div>
         </div>

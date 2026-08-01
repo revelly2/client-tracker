@@ -57,13 +57,13 @@ export default function ProjectCard({
   const hasFiles = project.fileLinks && project.fileLinks.length > 0
 
   return (
-    <div className="glass-card p-5 flex flex-col gap-4 animate-slide-up">
+    <div className="glass-card p-6 flex flex-col gap-5 animate-entrance group hover:shadow-[0_10px_40px_rgba(59,130,246,0.1)] transition-all">
       {/* Header row */}
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Project Name + Payment */}
-          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 mb-1">
-            <h3 className="text-base font-bold text-slate-100 leading-snug truncate max-w-[60%]">
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 mb-2">
+            <h3 className="text-lg font-bold text-white leading-snug truncate max-w-[60%] group-hover:text-blue-400 transition-colors">
               {project.name}
             </h3>
             <div className="shrink-0">
@@ -71,54 +71,54 @@ export default function ProjectCard({
             </div>
           </div>
           {/* Client Name */}
-          <div className="flex items-center gap-1.5 text-sm text-slate-400 mb-3">
-            <User size={13} className="shrink-0" />
-            <span className="font-medium">{project.clientName}</span>
-            <span className="text-slate-600 mx-1">·</span>
-            <span className="text-xs text-slate-500">{formattedDate}</span>
+          <div className="flex items-center gap-2 text-xs text-slate-400 mb-4 font-mono">
+            <User size={14} className="text-blue-500 shrink-0" />
+            <span className="font-semibold text-slate-300">{project.clientName}</span>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-500">{formattedDate}</span>
           </div>
 
           {/* Progress bar */}
-          <ProgressBar value={project.progress} />
+          <ProgressBar value={project.progress} animated />
         </div>
       </div>
 
       {/* Status row */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-medium">Status:</span>
+      <div className="flex items-center justify-between pb-2">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Status</span>
           <StatusBadge status={project.status} />
         </div>
         {/* Expand/collapse extras button */}
         {hasExtras && (
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-slate-500 hover:text-blue-400 transition-colors"
             id={`expand-extras-${project.id}`}
             title={expanded ? 'Hide details' : 'Show more details'}
           >
-            {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             {expanded ? 'Less' : 'More'}
           </button>
         )}
       </div>
 
       {/* Notes */}
-      <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-3">
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <FileText size={12} className="text-slate-500" />
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Notes</span>
+      <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-4 shadow-inner">
+        <div className="flex items-center gap-2 mb-2">
+          <FileText size={14} className="text-blue-500" />
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Protocol Notes</span>
         </div>
-        <p className="text-sm text-slate-300 leading-relaxed line-clamp-3">{project.notes || '—'}</p>
+        <p className="text-sm text-slate-300 leading-relaxed font-light line-clamp-3">{project.notes || 'No active remarks.'}</p>
       </div>
 
       {/* ── File Attachments (always visible) ── */}
       {hasFiles && (
         <div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <Paperclip size={12} className="text-slate-500" />
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-              Attachments ({project.fileLinks!.length})
+          <div className="flex items-center gap-2 mb-3">
+            <Paperclip size={14} className="text-blue-500" />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              Data Assets ({project.fileLinks!.length})
             </span>
           </div>
           <FileAttachments files={project.fileLinks!} compact />
@@ -127,21 +127,21 @@ export default function ProjectCard({
 
       {/* ── Expandable extras (project link + images) ── */}
       {hasExtras && expanded && (
-        <div className="space-y-3 pt-1 border-t border-slate-800">
+        <div className="space-y-4 pt-4 border-t border-white/5 animate-entrance">
           {/* Project Link */}
           {project.projectLink && (
             <div>
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Link size={12} className="text-indigo-400" />
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Project Link</span>
+              <div className="flex items-center gap-2 mb-2">
+                <Link size={14} className="text-blue-500" />
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">External Node</span>
               </div>
               <a
                 href={project.projectLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors truncate max-w-full"
+                className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors truncate max-w-full font-mono bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20 shadow-inner"
               >
-                <ExternalLink size={11} />
+                <ExternalLink size={12} />
                 {project.projectLink}
               </a>
             </div>
@@ -150,18 +150,18 @@ export default function ProjectCard({
           {/* Image Gallery (thumbnails) */}
           {project.imageLinks && project.imageLinks.length > 0 && (
             <div>
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Image size={12} className="text-emerald-400" />
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pictures ({project.imageLinks.length})</span>
+              <div className="flex items-center gap-2 mb-3">
+                <Image size={14} className="text-blue-500" />
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Visual Feeds ({project.imageLinks.length})</span>
               </div>
-              <div className="grid grid-cols-3 gap-1.5">
+              <div className="grid grid-cols-3 gap-2">
                 {project.imageLinks.map((url, i) => (
-                  <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-xl border border-white/5 hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={url}
-                      alt={`Project image ${i + 1}`}
-                      className="w-full h-16 object-cover rounded-lg border border-slate-700/50 hover:border-indigo-500/50 transition-colors"
+                      alt={`Feed asset ${i + 1}`}
+                      className="w-full h-16 object-cover opacity-80 hover:opacity-100 transition-opacity"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                     />
                   </a>
@@ -174,41 +174,41 @@ export default function ProjectCard({
 
       {/* Admin actions */}
       {isAdmin && (
-        <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+        <div className="flex items-center gap-3 pt-4 border-t border-white/5">
           <button
             onClick={handleCopyLink}
-            className={`btn-secondary flex-1 justify-center text-xs py-2 transition-all ${copied ? 'text-emerald-400 border-emerald-700/50' : ''}`}
+            className={`btn-secondary flex-1 justify-center py-2.5 transition-all ${copied ? 'text-blue-400 border-blue-500/50 bg-blue-500/10' : ''}`}
             title="Copy client share link"
             id={`copy-link-${project.id}`}
           >
-            {copied ? <Check size={13} /> : <Copy size={13} />}
-            {copied ? 'Copied!' : 'Copy Share Link'}
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? 'Link Copied' : 'Copy Access Token'}
           </button>
           <a
             href={shareUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-secondary px-3 py-2 text-xs"
+            className="btn-secondary px-3.5 py-2.5"
             title="Preview client view"
             id={`preview-link-${project.id}`}
           >
-            <ExternalLink size={13} />
+            <ExternalLink size={14} />
           </a>
           <button
             onClick={() => onEdit?.(project)}
-            className="btn-secondary px-3 py-2 text-xs"
+            className="btn-secondary px-3.5 py-2.5 hover:text-blue-400 hover:border-blue-500/30"
             title="Edit project"
             id={`edit-${project.id}`}
           >
-            <Pencil size={13} />
+            <Pencil size={14} />
           </button>
           <button
             onClick={() => onDelete?.(project.id)}
-            className="btn-danger px-3 py-2"
+            className="btn-danger px-3.5 py-2.5 hover:bg-red-500/20 hover:text-red-400"
             title="Delete project"
             id={`delete-${project.id}`}
           >
-            <Trash2 size={13} />
+            <Trash2 size={14} />
           </button>
         </div>
       )}
