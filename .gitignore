@@ -33,3 +33,6 @@ next-env.d.ts
 # Editor
 .vscode/
 .idea/
+
+.vercel
+.env*

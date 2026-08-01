@@ -1,18 +1,35 @@
 'use server'
 
-import { kv } from '@vercel/kv'
+import { createClient } from 'redis'
 import { v4 as uuidv4 } from 'uuid'
 import type { Project } from './types'
 
 const PROJECTS_KEY = 'cpt_projects'
-const SHARE_TOKENS_KEY = 'cpt_share_tokens' // Maps token to project ID
+const SHARE_TOKENS_KEY = 'cpt_share_tokens'
+
+let redisClient: ReturnType<typeof createClient>
+
+async function getClient() {
+  if (!redisClient) {
+    redisClient = createClient({ url: process.env.REDIS_URL })
+    redisClient.on('error', err => console.error('Redis Client Error', err))
+  }
+  if (!redisClient.isOpen) {
+    await redisClient.connect()
+  }
+  return redisClient
+}
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    const projectsMap = await kv.hgetall<Record<string, Project>>(PROJECTS_KEY)
-    if (!projectsMap) return []
-    // Sort by createdAt descending
-    return Object.values(projectsMap).sort(
+    const client = await getClient()
+    const projectsMap = await client.hGetAll(PROJECTS_KEY)
+    
+    if (!projectsMap || Object.keys(projectsMap).length === 0) return []
+    
+    const projects = Object.values(projectsMap).map(p => JSON.parse(p) as Project)
+    
+    return projects.sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
   } catch (err) {
@@ -23,11 +40,12 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProjectByToken(token: string): Promise<Project | null> {
   try {
-    const projectId = await kv.hget<string>(SHARE_TOKENS_KEY, token)
+    const client = await getClient()
+    const projectId = await client.hGet(SHARE_TOKENS_KEY, token)
     if (!projectId) return null
     
-    const project = await kv.hget<Project>(PROJECTS_KEY, projectId)
-    return project || null
+    const projectStr = await client.hGet(PROJECTS_KEY, projectId)
+    return projectStr ? JSON.parse(projectStr) : null
   } catch (err) {
     console.error('Failed to get project by token:', err)
     return null
@@ -42,31 +60,38 @@ export async function addProject(data: Omit<Project, 'id' | 'shareToken' | 'crea
     createdAt: new Date().toISOString(),
   }
   
+  const client = await getClient()
   await Promise.all([
-    kv.hset(PROJECTS_KEY, { [newProject.id]: newProject }),
-    kv.hset(SHARE_TOKENS_KEY, { [newProject.shareToken]: newProject.id })
+    client.hSet(PROJECTS_KEY, newProject.id, JSON.stringify(newProject)),
+    client.hSet(SHARE_TOKENS_KEY, newProject.shareToken, newProject.id)
   ])
   
   return newProject
 }
 
 export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'shareToken' | 'createdAt'>>): Promise<Project | null> {
-  const project = await kv.hget<Project>(PROJECTS_KEY, id)
-  if (!project) return null
+  const client = await getClient()
+  const projectStr = await client.hGet(PROJECTS_KEY, id)
+  if (!projectStr) return null
 
+  const project: Project = JSON.parse(projectStr)
   const updatedProject = { ...project, ...data }
-  await kv.hset(PROJECTS_KEY, { [id]: updatedProject })
+  
+  await client.hSet(PROJECTS_KEY, id, JSON.stringify(updatedProject))
   
   return updatedProject
 }
 
 export async function deleteProject(id: string): Promise<boolean> {
-  const project = await kv.hget<Project>(PROJECTS_KEY, id)
-  if (!project) return false
+  const client = await getClient()
+  const projectStr = await client.hGet(PROJECTS_KEY, id)
+  if (!projectStr) return false
+
+  const project: Project = JSON.parse(projectStr)
 
   await Promise.all([
-    kv.hdel(PROJECTS_KEY, id),
-    kv.hdel(SHARE_TOKENS_KEY, project.shareToken)
+    client.hDel(PROJECTS_KEY, id),
+    client.hDel(SHARE_TOKENS_KEY, project.shareToken)
   ])
   
   return true
