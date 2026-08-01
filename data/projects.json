@@ -1,0 +1,74 @@
+[
+  {
+    "id": "proj-a1b2c3d4",
+    "shareToken": "share-8f3a2c1d-9e4b-4f5a-b6c7-d8e9f0a1b2c3",
+    "name": "E-Commerce Website Redesign",
+    "clientName": "Maria Santos",
+    "cost": 45000,
+    "paymentStatus": "paid",
+    "progress": 85,
+    "status": "Active",
+    "notes": "Frontend development is nearly complete. Currently integrating the payment gateway (PayMongo). Final QA testing scheduled for next week before handoff.",
+    "createdAt": "2026-06-01T08:00:00Z"
+  },
+  {
+    "id": "proj-e5f6g7h8",
+    "shareToken": "share-2d4f6a8c-1b3e-5d7f-9a0b-2c4e6f8a0c2e",
+    "name": "Company Branding Package",
+    "clientName": "Roberto Cruz",
+    "cost": 18500,
+    "paymentStatus": "partial",
+    "progress": 60,
+    "status": "Active",
+    "notes": "Logo finalized and approved by client. Currently working on brand guidelines document and social media asset templates. Awaiting feedback on color palette revision.",
+    "createdAt": "2026-06-15T09:00:00Z"
+  },
+  {
+    "id": "proj-i9j0k1l2",
+    "shareToken": "share-3e5g7i9k-2c4f-6h8j-0l2n-4p6r8t0v2x4z",
+    "name": "Inventory Management System",
+    "clientName": "Lena Reyes",
+    "cost": 75000,
+    "paymentStatus": "none",
+    "progress": 25,
+    "status": "On Hold",
+    "notes": "Project is currently on hold pending client's confirmation on the system scope. Technical specification document has been drafted and sent for review. Awaiting downpayment to resume development.",
+    "createdAt": "2026-07-01T10:00:00Z"
+  },
+  {
+    "id": "proj-m3n4o5p6",
+    "shareToken": "share-4f6h8j0l-3d5g-7i9k-1m3o-5q7s9u1w3y5a",
+    "name": "Mobile App (iOS & Android)",
+    "clientName": "James Tan",
+    "cost": 120000,
+    "paymentStatus": "partial",
+    "progress": 45,
+    "status": "Active",
+    "notes": "Authentication, onboarding flow, and home dashboard complete. Currently building the core booking module. Backend API endpoints for notifications are in progress. Next milestone: Beta build delivery.",
+    "createdAt": "2026-05-10T11:00:00Z"
+  },
+  {
+    "id": "proj-q7r8s9t0",
+    "shareToken": "share-5g7i9k1m-4e6h-8j0l-2n4p-6r8t0v2x4z6b",
+    "name": "Restaurant POS System",
+    "clientName": "Claire Bautista",
+    "cost": 55000,
+    "paymentStatus": "paid",
+    "progress": 100,
+    "status": "Completed",
+    "notes": "Project successfully delivered and deployed. Client has been trained on the system. All final documentation provided. Warranty support period active until October 2026.",
+    "createdAt": "2026-03-20T08:00:00Z"
+  },
+  {
+    "id": "proj-u1v2w3x4",
+    "shareToken": "share-6h8j0l2n-5f7i-9k1m-3o5q-7s9u1w3y5a7c",
+    "name": "SEO & Digital Marketing Setup",
+    "clientName": "Andrei Lopez",
+    "cost": 22000,
+    "paymentStatus": "partial",
+    "progress": 70,
+    "status": "Reviewing",
+    "notes": "Initial SEO audit complete. On-page optimizations applied to 80% of pages. Google Analytics 4 and Search Console configured. Currently in client review phase — waiting for approval on the content calendar before proceeding.",
+    "createdAt": "2026-06-25T13:00:00Z"
+  }
+]
