@@ -6,7 +6,7 @@ import {
   Link, Image, ExternalLink,
 } from 'lucide-react'
 import type { Project } from '../../../lib/types'
-import { getProjectByToken } from '../../../lib/store'
+import { getProjectByToken } from '../../../lib/actions'
 import ProgressBar from '../../../components/ProgressBar'
 import PaymentBadge from '../../../components/PaymentBadge'
 import StatusBadge from '../../../components/StatusBadge'
@@ -43,8 +43,11 @@ export default function PublicProjectPage({
   const [lightbox, setLightbox] = useState<string | null>(null)
 
   useEffect(() => {
-    const found = getProjectByToken(params.projectId)
-    setProject(found)
+    async function fetchProject() {
+      const found = await getProjectByToken(params.projectId)
+      setProject(found)
+    }
+    fetchProject()
   }, [params.projectId])
 
   // Loading state

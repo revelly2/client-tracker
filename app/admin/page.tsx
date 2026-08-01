@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import {
-  LayoutDashboard, Plus, Search, FolderKanban, AlertTriangle,
+  LayoutDashboard, Plus, Search, FolderKanban, AlertTriangle, Loader2
 } from 'lucide-react'
 import type { Project } from '../../lib/types'
 import {
-  loadProjects, addProject, updateProject, deleteProject,
-} from '../../lib/store'
+  getProjects, addProject, updateProject, deleteProject,
+} from '../../lib/actions'
 import ProjectCard from '../../components/ProjectCard'
 import ProjectForm from '../../components/ProjectForm'
 
@@ -26,25 +26,29 @@ function StatCard({ label, value, sub, accent }: {
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
 export default function AdminPage() {
-  const [hydrated, setHydrated]     = useState(false)
+  const [loading, setLoading]       = useState(true)
   const [projects, setProjects]     = useState<Project[]>([])
   const [search, setSearch]         = useState('')
   const [showForm, setShowForm]     = useState(false)
   const [editing, setEditing]       = useState<Project | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
-  const refresh = useCallback(() => setProjects(loadProjects()), [])
+  const refresh = useCallback(async () => {
+    setLoading(true)
+    const data = await getProjects()
+    setProjects(data)
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
-    setHydrated(true)
     refresh()
   }, [refresh])
 
-  const handleSave = (data: Omit<Project, 'id' | 'shareToken' | 'createdAt'>) => {
+  const handleSave = async (data: Omit<Project, 'id' | 'shareToken' | 'createdAt'>) => {
     if (editing) {
-      updateProject(editing.id, data)
+      await updateProject(editing.id, data)
     } else {
-      addProject(data)
+      await addProject(data)
     }
     setShowForm(false)
     setEditing(null)
@@ -54,11 +58,13 @@ export default function AdminPage() {
   const handleEdit = (p: Project) => { setEditing(p); setShowForm(true) }
 
   const confirmDelete = (id: string) => setDeleteTarget(id)
-  const handleDeleteConfirmed = () => {
-    if (deleteTarget) { deleteProject(deleteTarget); setDeleteTarget(null); refresh() }
+  const handleDeleteConfirmed = async () => {
+    if (deleteTarget) {
+      await deleteProject(deleteTarget)
+      setDeleteTarget(null)
+      refresh()
+    }
   }
-
-  if (!hydrated) return null // avoid hydration mismatch
 
   const filtered = projects.filter(
     (p) =>
@@ -140,8 +146,13 @@ export default function AdminPage() {
           />
         </div>
 
-        {/* Project grid */}
-        {filtered.length === 0 ? (
+        {/* Project grid or loading state */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+            <Loader2 size={40} className="animate-spin mb-4 text-indigo-500" />
+            <p>Loading projects...</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <FolderKanban size={40} className="text-slate-700 mx-auto mb-3" />
             <p className="text-slate-400 font-medium">No projects found</p>
