@@ -41,6 +41,7 @@ export default function PublicProjectPage({
 }) {
   const [project, setProject] = useState<Project | null | undefined>(undefined)
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchProject() {
@@ -198,23 +199,45 @@ export default function PublicProjectPage({
                     icon={<Link size={12} className="text-indigo-400" />}
                     label="Project Link"
                   />
-                  <a
-                    href={project.projectLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 bg-indigo-950/40 border border-indigo-700/40 hover:border-indigo-500/60 rounded-xl px-4 py-3 transition-all group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
-                      <ExternalLink size={14} className="text-indigo-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-slate-500 mb-0.5">Visit Project</p>
-                      <p className="text-sm text-indigo-300 group-hover:text-indigo-200 truncate transition-colors">
-                        {project.projectLink}
-                      </p>
-                    </div>
-                    <ExternalLink size={14} className="text-slate-600 group-hover:text-indigo-400 shrink-0 transition-colors" />
-                  </a>
+                  {project.paymentStatus !== 'paid' ? (
+                    <button
+                      onClick={() => setPaymentModalOpen(true)}
+                      className="w-full text-left relative overflow-hidden rounded-xl border border-dashed border-slate-700 bg-slate-900/30 hover:bg-slate-800/50 transition-colors group p-4 flex flex-col items-center justify-center"
+                    >
+                      <div className="w-full opacity-30 blur-[4px] pointer-events-none mb-3">
+                        <div className="flex items-center gap-3 bg-indigo-950/40 border border-indigo-700/40 rounded-xl px-4 py-3">
+                          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
+                            <ExternalLink size={14} className="text-indigo-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-slate-500 mb-0.5">Visit Project</p>
+                            <p className="text-sm text-indigo-300 truncate">{project.projectLink}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-widest group-hover:scale-105 transition-transform drop-shadow-md">
+                        <AlertCircle size={14} /> Requires Payment to Unlock
+                      </div>
+                    </button>
+                  ) : (
+                    <a
+                      href={project.projectLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 bg-indigo-950/40 border border-indigo-700/40 hover:border-indigo-500/60 rounded-xl px-4 py-3 transition-all group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
+                        <ExternalLink size={14} className="text-indigo-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-slate-500 mb-0.5">Visit Project</p>
+                        <p className="text-sm text-indigo-300 group-hover:text-indigo-200 truncate transition-colors">
+                          {project.projectLink}
+                        </p>
+                      </div>
+                      <ExternalLink size={14} className="text-slate-600 group-hover:text-indigo-400 shrink-0 transition-colors" />
+                    </a>
+                  )}
                 </div>
               </>
             )}
@@ -278,6 +301,48 @@ export default function PublicProjectPage({
           This is a private project update link. Please do not share it with others.
         </p>
       </div>
+
+      {/* Payment Modal */}
+      {paymentModalOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setPaymentModalOpen(false)}
+        >
+          <div className="glass-card w-full max-w-sm p-8 shadow-2xl animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-amber-950/60 border border-amber-800/40 flex items-center justify-center mb-5 mx-auto">
+              <AlertCircle size={24} className="text-amber-400" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-100 text-center mb-2">Payment Required</h3>
+            <p className="text-sm text-slate-400 text-center mb-6">
+              Please complete your payment to unlock the project link.
+            </p>
+            
+            <div className="space-y-4 text-sm text-slate-300 bg-slate-900/50 p-5 rounded-xl border border-slate-800">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-indigo-950 flex items-center justify-center text-indigo-400 font-bold text-xs shrink-0 mt-0.5">1</div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Pay using GCash</p>
+                  <p className="text-lg font-mono font-bold text-emerald-400">0977 481 2075</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 pt-2">
+                <div className="w-6 h-6 rounded-full bg-indigo-950 flex items-center justify-center text-indigo-400 font-bold text-xs shrink-0 mt-0.5">2</div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Verify Payment</p>
+                  <p>Send a screenshot of the receipt to <br/><strong className="text-indigo-400">Mark Daluson (Facebook)</strong></p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setPaymentModalOpen(false)}
+              className="btn-primary w-full justify-center mt-6 py-2.5"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
